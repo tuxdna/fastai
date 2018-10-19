@@ -144,7 +144,7 @@ def apply_lsuv_init(model, data, needed_std=1.0, std_tol=0.1, max_attempts=10, d
             current_std = gg['act_dict'].std()
             attempts+=1
             if attempts > max_attempts:
-                print(f'Cannot converge in {max_attempts} iterations')
+                print('Cannot converge in %s iterations'.format(max_attempts))
                 break
         if gg['hook'] is not None:
            gg['hook'].remove()

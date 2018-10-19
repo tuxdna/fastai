@@ -5,7 +5,7 @@ from torch.utils.data.sampler import Sampler
 import spacy
 from spacy.symbols import ORTH
 
-re_tok = re.compile(f'([{string.punctuation}“”¨«»®´·º½¾¿¡§£₤‘’])')
+re_tok = re.compile('([%s“”¨«»®´·º½¾¿¡§£₤‘’])'.format(string.punctuation))
 def tokenize(s): return re_tok.sub(r' \1 ', s).split()
 
 def texts_labels_from_folders(path, folders):
@@ -59,13 +59,13 @@ class Tokenizer():
     def replace_rep(m):
         TK_REP = 'tk_rep'
         c,cc = m.groups()
-        return f' {TK_REP} {len(cc)+1} {c} '
+        return ' %s %s %s '.format(TK_REP, len(cc)+1, c)
 
     @staticmethod
     def replace_wrep(m):
         TK_WREP = 'tk_wrep'
         c,cc = m.groups()
-        return f' {TK_WREP} {len(cc.split())+1} {c} '
+        return ' %s %s %s '.format(TK_WREP, len(cc.split())+1, c)
 
     @staticmethod
     def do_caps(ss):

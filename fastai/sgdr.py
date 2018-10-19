@@ -366,17 +366,17 @@ class SaveBestModel(LossRecorder):
         loss = metrics[0]
         if self.best_loss == None or loss < self.best_loss:
             self.best_loss = loss
-            self.model.save(f'{self.name}')
+            self.model.save("%s".format(self.name))
     
     def save_when_acc(self, metrics):
         loss, acc = metrics[0], metrics[1]
         if self.best_acc == None or acc > self.best_acc:
             self.best_acc = acc
             self.best_loss = loss
-            self.model.save(f'{self.name}')
+            self.model.save("%s".format(self.name))
         elif acc == self.best_acc and  loss < self.best_loss:
             self.best_loss = loss
-            self.model.save(f'{self.name}')
+            self.model.save("%s".format(self.name))
         
     def on_epoch_end(self, metrics):
         super().on_epoch_end(metrics)

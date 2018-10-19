@@ -89,8 +89,8 @@ def resize_imgs(fnames, targ, path, new_path, resume=True, fn=None):
 def read_dir(path, folder):
     """ Returns a list of relative file paths to `path` for all files within `folder` """
     full_path = os.path.join(path, folder)
-    fnames = glob(f"{full_path}/*.*")
-    directories = glob(f"{full_path}/*/")
+    fnames = glob("%s/*.*".format(full_path))
+    directories = glob("%s/*/".format(full_path))
     if any(fnames):
         return [os.path.relpath(f,path) for f in fnames]
     elif any(directories):
@@ -287,7 +287,7 @@ def open_image(fn):
                 im = cv2.imdecode(image, flags).astype(np.float32)/255
             else:
                 im = cv2.imread(str(fn), flags).astype(np.float32)/255
-            if im is None: raise OSError(f'File not recognized by opencv: {fn}')
+            if im is None: raise OSError('File not recognized by opencv: %s'.format(fn))
             return cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
         except Exception as e:
             raise OSError('Error handling image at: {}'.format(fn)) from e
@@ -573,7 +573,7 @@ class ImageClassifierData(ImageData):
         """
         assert not (tfms[0] is None or tfms[1] is None), "please provide transformations for your train and validation sets"
         assert not (os.path.isabs(folder)), "folder needs to be a relative path"
-        fnames = np.core.defchararray.add(f'{folder}/', sorted(os.listdir(f'{path}{folder}')))
+        fnames = np.core.defchararray.add('%s/'.format(folder), sorted(os.listdir('%s%s' % (path, folder))))
         return cls.from_names_and_array(path, fnames, y, classes, val_idxs, test_name,
                 num_workers=num_workers, tfms=tfms, bs=bs)
 
