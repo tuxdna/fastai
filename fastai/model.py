@@ -110,7 +110,7 @@ def fit(model, data, n_epochs, opt, crit, metrics=None, callbacks=None, stepper=
     for cb in callbacks: cb.on_train_begin()
     names = ["epoch", "trn_loss", "val_loss"] + [f.__name__ for f in metrics]
     if swa_model is not None:
-        swa_names = ['swa_loss'] + [f'swa_{f.__name__}' for f in metrics]
+        swa_names = ['swa_loss'] + ['swa_%s' % (f.__name__) for f in metrics]
         names += swa_names
         # will use this to call evaluate later
         swa_stepper = stepper(swa_model, None, crit, **kwargs)

@@ -42,17 +42,17 @@ def load_model(m, p):
 def load_pre(pre, f, fn):
     m = f()
     path = os.path.dirname(__file__)
-    if pre: load_model(m, f'{path}/weights/{fn}.pth')
+    if pre: load_model(m, '%s/weights/%s.pth' % (path, fn))
     return m
 
 def _fastai_model(name, paper_title, paper_href):
     def add_docs_wrapper(f):
-        f.__doc__ = f"""{name} model from
-        `"{paper_title}" <{paper_href}>`_
+        f.__doc__ = """%s model from
+        `"%s" <%s>`_
 
         Args:
            pre (bool): If True, returns a model pre-trained on ImageNet
-        """
+        """ % (name, paper_title, paper_href)
         return f
     return add_docs_wrapper
 

@@ -15,8 +15,8 @@ class LayerOptimizer():
         self.opt = opt_fn(self.opt_params())
 
     def opt_params(self):
-        assert len(self.layer_groups) == len(self.lrs), f'size mismatch, expected {len(self.layer_groups)} lrs, but got {len(self.lrs)}'
-        assert len(self.layer_groups) == len(self.wds), f'size mismatch, expected {len(self.layer_groups)} wds, but got {len(self.wds)}'
+        assert len(self.layer_groups) == len(self.lrs), 'size mismatch, expected %s lrs, but got %s' % (len(self.layer_groups), len(self.lrs))
+        assert len(self.layer_groups) == len(self.wds), 'size mismatch, expected %s wds, but got %s' % (len(self.layer_groups), len(self.wds))
         params = list(zip(self.layer_groups,self.lrs,self.wds))
         return [opt_params(*p) for p in params]
 
@@ -64,7 +64,7 @@ class LayerOptimizer():
             self.opt = opt_fn(self.opt_params())
 
 def zip_strict_(l, r):
-    assert len(l) == len(r), f'size mismatch, expected lengths {len(l)}, but got {len(l)} and {len(r)} instead.'
+    assert len(l) == len(r), 'size mismatch, expected lengths %s, but got %s and %s instead.' % (len(l), len(l), len(r))
     return zip(l, r)
 
 def set_lrs(opt, lrs):

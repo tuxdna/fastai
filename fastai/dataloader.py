@@ -18,7 +18,7 @@ def get_tensor(batch, pin, half=False):
         return {k: get_tensor(sample, pin, half) for k, sample in batch.items()}
     elif isinstance(batch, collections.Sequence):
         return [get_tensor(sample, pin, half) for sample in batch]
-    raise TypeError(f"batch must contain numbers, dicts or lists; found {type(batch)}")
+    raise TypeError("batch must contain numbers, dicts or lists; found %s" % type(batch))
 
 
 class DataLoader(object):

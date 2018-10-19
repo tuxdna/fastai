@@ -111,8 +111,8 @@ class Learner():
         if name is None: return None
         return lambda sched, cycle: self.save_cycle(name, cycle)
 
-    def save_cycle(self, name, cycle): self.save(f'{name}_cyc_{cycle}')
-    def load_cycle(self, name, cycle): self.load(f'{name}_cyc_{cycle}')
+    def save_cycle(self, name, cycle): self.save('%s_cyc_%s' % (name, cycle))
+    def load_cycle(self, name, cycle): self.load('%s_cyc_%s' % (name, cycle))
 
     def half(self):
         if self.fp16: return
@@ -385,7 +385,7 @@ class Learner():
         Returns:
             a numpy array containing the predictions from the model
         """
-        if not isinstance(arr, np.ndarray): raise OSError(f'Not valid numpy array')
+        if not isinstance(arr, np.ndarray): raise OSError('Not valid numpy array')
         self.model.eval()
         return to_np(self.model(to_gpu(V(T(arr)))))
 

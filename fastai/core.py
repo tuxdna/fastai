@@ -95,7 +95,7 @@ def split_by_idxs(seq, idxs):
     last = 0
     for idx in idxs:
         if not (-len(seq) <= idx < len(seq)):
-          raise KeyError(f'Idx {idx} is out-of-bounds')
+          raise KeyError('Idx %s is out-of-bounds' % (idx, ))
         yield seq[last:idx]
         last = idx
     yield seq[last:]
