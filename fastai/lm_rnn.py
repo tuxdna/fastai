@@ -38,7 +38,7 @@ class RNN_Encoder(nn.Module):
     initrange=0.1
 
     def __init__(self, ntoken, emb_sz, n_hid, n_layers, pad_token, bidir=False,
-                 dropouth=0.3, dropouti=0.65, dropoute=0.1, wdrop=0.5, qrnn=False):
+                 dropouth=0.3, dropouti=0.65, dropoute=0.1, wdrop=0.5, qrnn=False, is_cuda=False):
         """ Default constructor for the RNN_Encoder class
 
             Args:
@@ -80,6 +80,7 @@ class RNN_Encoder(nn.Module):
         self.emb_sz,self.n_hid,self.n_layers,self.dropoute = emb_sz,n_hid,n_layers,dropoute
         self.dropouti = LockedDropout(dropouti)
         self.dropouths = nn.ModuleList([LockedDropout(dropouth) for l in range(n_layers)])
+        self.is_cuda = is_cuda
 
     def forward(self, input):
         """ Invoked during the forward propagation of the RNN_Encoder module.
@@ -112,10 +113,19 @@ class RNN_Encoder(nn.Module):
             self.hidden = repackage_var(new_hidden)
         return raw_outputs, outputs
 
+    def set_cuda(self, is_cuda=True):
+        self.is_cuda = is_cuda
+
     def one_hidden(self, l):
         nh = (self.n_hid if l != self.n_layers - 1 else self.emb_sz)//self.ndir
-        if IS_TORCH_04: return Variable(self.weights.new(self.ndir, self.bs, nh).zero_())
-        else: return Variable(self.weights.new(self.ndir, self.bs, nh).zero_(), volatile=not self.training)
+        wts = self.weights.new(self.ndir, self.bs, nh).zero_()
+        if self.is_cuda:
+            wts = wts.cuda()
+
+        if IS_TORCH_04:
+            return Variable(wts)
+        else:
+            return Variable(wts, volatile=not self.training)
 
     def reset(self):
         if self.qrnn: [r.reset() for r in self.rnns]
@@ -239,9 +249,11 @@ def get_language_model(n_tok, emb_sz, n_hid, n_layers, pad_token,
 
 
 def get_rnn_classifier(bptt, max_seq, n_class, n_tok, emb_sz, n_hid, n_layers, pad_token, layers, drops, bidir=False,
-                      dropouth=0.3, dropouti=0.5, dropoute=0.1, wdrop=0.5, qrnn=False):
+                       dropouth=0.3, dropouti=0.5, dropoute=0.1, wdrop=0.5, qrnn=False,
+                       is_cuda=False):
     rnn_enc = MultiBatchRNN(bptt, max_seq, n_tok, emb_sz, n_hid, n_layers, pad_token=pad_token, bidir=bidir,
-                      dropouth=dropouth, dropouti=dropouti, dropoute=dropoute, wdrop=wdrop, qrnn=qrnn)
+                            dropouth=dropouth, dropouti=dropouti, dropoute=dropoute, wdrop=wdrop, qrnn=qrnn,
+                            is_cuda=is_cuda)
     return SequentialRNN(rnn_enc, PoolingLinearClassifier(layers, drops))
 
 get_rnn_classifer=get_rnn_classifier
